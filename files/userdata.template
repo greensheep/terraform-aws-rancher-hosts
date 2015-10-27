@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Install jq
+yum install -y jq
+
+# Install docker
+wget -qO- https://get.docker.com/ | sh
+service docker start
+
+# Setup initial vars
+serverUrl=https://${environment_access_key}:${environment_secret_key}@${server_hostname}
+projectId=${environment_id}
+
+# Make initial POST request for a registration token and record the id
+response=$(curl -s -X POST $serverUrl/v1/registrationtokens?projectId=$projectId)
+requestId=$(echo $response | jq -r '.id')
+requestState=$(echo $response | jq -r '.state')
+
+# The registration token request is async so keep checking until it's complete
+while [[ "$requestState" != "active" ]]; do
+	sleep 2
+	response=$(curl -s $serverUrl/v1/registrationtokens/$requestId)
+	requestState=$(echo $response | jq -r '.state')
+done
+
+# Get the instance id from metadata
+instanceId=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+
+# Use the command in the response to start the rancher agent
+cmd=$(echo $response | jq -r '.command')
+eval $${cmd/sudo docker run /docker run -e CATTLE_HOST_LABELS=\"HOSTID=$instanceId&CLOUD=aws&CLUSTER=${cluster_name}\" }
