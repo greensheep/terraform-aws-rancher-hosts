@@ -1,6 +1,6 @@
 # Attach IPSEC rules to host instance security group.
 # Enables the rancher overlay network for connected hosts.
-# Traffic only allowed from other machines with this security group.
+# Traffic only allowed to and from other machines with this security group.
 resource "aws_security_group_rule" "ipsec_ingress_1" {
 
     security_group_id = "${var.cluster_instance_security_group_id}"
@@ -16,10 +16,40 @@ resource "aws_security_group_rule" "ipsec_ingress_1" {
 
 }
 
+resource "aws_security_group_rule" "ipsec_egress_1" {
+
+    security_group_id = "${var.cluster_instance_security_group_id}"
+    type = "egress"
+    from_port = 4500
+    to_port = 4500
+    protocol = "udp"
+    source_security_group_id = "${var.cluster_instance_security_group_id}"
+
+    lifecycle {
+        create_before_destroy = true
+    }
+
+}
+
 resource "aws_security_group_rule" "ipsec_ingress_2" {
 
     security_group_id = "${var.cluster_instance_security_group_id}"
     type = "ingress"
+    from_port = 500
+    to_port = 500
+    protocol = "udp"
+    source_security_group_id = "${var.cluster_instance_security_group_id}"
+
+    lifecycle {
+        create_before_destroy = true
+    }
+
+}
+
+resource "aws_security_group_rule" "ipsec_egress_2" {
+
+    security_group_id = "${var.cluster_instance_security_group_id}"
+    type = "egress"
     from_port = 500
     to_port = 500
     protocol = "udp"
