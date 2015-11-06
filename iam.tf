@@ -25,17 +25,27 @@ EOF
 
 }
 
-# AWS managed lifecycle hook policy
-resource "aws_iam_policy_attachment" "lifecycle_role_policy" {
-
-    name = "AutoScalingNotificationAccessRole"
-    policy_arn = "arn:aws:iam::aws:policy/service-role/AutoScalingNotificationAccessRole"
-    roles = [
-        "${aws_iam_role.lifecycle_role.name}"
+# Attach policy document for access to the sqs queue
+resource "aws_iam_role_policy" "lifecycle_role_policy" {
+    name = "${var.cluster_name}-lifecycle-hooks-policy"
+    role = "${aws_iam_role.lifecycle_role.id}"
+    policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Resource": "${var.lifecycle_hooks_sqs_queue_arn}",
+    "Action": [
+      "sqs:SendMessage",
+      "sqs:GetQueueUrl",
+      "sns:Publish"
     ]
+  }]
+}
+EOF
 
     lifecycle {
         create_before_destroy = true
     }
-
+    
 }
