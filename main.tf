@@ -27,6 +27,10 @@ variable "cluster_autoscaling_group_name" {
 variable "cluster_instance_security_group_id" {
     description = "ID of the security group used for host instances. Will be modified to include rancher specific rules."
 }
+variable "cluster_instance_labels" {
+    description = "Additional labels to attach to host instances. Should be in the format: key=value&key2=value2"
+    default = ""
+}
 
 # Lifecycle hooks queue arn
 variable "lifecycle_hooks_sqs_queue_arn" {
