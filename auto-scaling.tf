@@ -10,6 +10,7 @@ resource "template_file" "user_data" {
         environment_access_key  = "${var.environment_access_key}"
         environment_secret_key  = "${var.environment_secret_key}"
         server_hostname         = "${var.server_hostname}"
+        docker_daemon_options   = "${var.docker_daemon_options}"
     }
 
     lifecycle {

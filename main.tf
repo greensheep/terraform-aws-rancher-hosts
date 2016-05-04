@@ -32,6 +32,12 @@ variable "cluster_instance_labels" {
     default = ""
 }
 
+# Docker options
+variable "docker_daemon_options" {
+    description = "Docker daemon options to write to the docker config file before startup."
+    default = ""
+}
+
 # Lifecycle hooks queue arn
 variable "lifecycle_hooks_sqs_queue_arn" {
     description = "ARN of the SQS queue used to receive autoscaling lifecycle hooks."

@@ -5,6 +5,13 @@ yum install -y jq
 
 # Install docker
 wget -qO- https://get.docker.com/ | sh
+
+# Add any docker daemon options
+if [ -n "${docker_daemon_options}" ]; then
+	echo 'OPTIONS="${docker_daemon_options}"' >> /etc/sysconfig/docker
+fi
+
+# Start docker
 service docker start
 
 # Setup initial vars
