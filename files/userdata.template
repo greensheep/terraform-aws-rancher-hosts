@@ -41,6 +41,12 @@ if [ -n "$customLabels" ]; then
 	instanceLabels="$instanceLabels&$customLabels"
 fi
 
+# Add external DNS label if there's a public IP address
+instancePublicIp=$(curl -f -s http://169.254.169.254/latest/meta-data/public-ipv4)
+if [ -n "$instancePublicIp" ]; then
+	instanceLabels="$instanceLabels&io.rancher.host.external_dns_ip=$instancePublicIp"
+fi
+
 # Use the command in the response to start the rancher agent
 cmd=$(echo $response | jq -r '.command')
 eval $${cmd/sudo docker run /docker run -e CATTLE_AGENT_IP=$instancePrivateIp -e CATTLE_HOST_LABELS=\"$instanceLabels\" }
