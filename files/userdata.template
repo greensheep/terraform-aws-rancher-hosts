@@ -1,10 +1,7 @@
 #!/bin/bash
 
 # Install jq
-yum install -y jq
-
-# Install docker
-wget -qO- https://get.docker.com/ | sh
+yum install -y jq docker
 
 # Add any docker daemon options
 if [ -n "${docker_daemon_options}" ]; then
