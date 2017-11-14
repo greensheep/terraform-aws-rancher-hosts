@@ -47,3 +47,6 @@ fi
 # Use the command in the response to start the rancher agent
 cmd=$(echo $response | jq -r '.command')
 eval $${cmd/sudo docker run /docker run -e CATTLE_AGENT_IP=$instancePrivateIp -e CATTLE_HOST_LABELS=\"$instanceLabels\" }
+
+# Fix to allow rancher-nfs
+ln -s /var/run/rancher/storage/rancher-nfs.sock /run/docker/plugins/rancher-nfs.sock
